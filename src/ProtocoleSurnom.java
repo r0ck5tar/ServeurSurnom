@@ -1,3 +1,5 @@
+import net.sf.json.*;
+
 /*
  * Cette classe lira les requetes en forme de chaine
  * respectant le format défini dans le protocole du 
