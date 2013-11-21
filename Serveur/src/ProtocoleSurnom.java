@@ -24,25 +24,32 @@ public class ProtocoleSurnom {
 	
 	public String genererReponse(String requete) {
 		String response = null;
-		
+
 		JSONParser parser = new JSONParser();
 		try {
 			JSONObject oRequete = (JSONObject) parser.parse(requete);
-			String action = oRequete.get("action").toString();
+			String action = "none";
 			
-			switch(action) {
-			case "add" : 
-				response = add(oRequete.get("nick").toString(), oRequete.get("name").toString()).toJSONString();
-				break;
-			case "delete" : break;
-			case "delete_name" : break;
-			case "list" : 
-				response = list().toJSONString();
-				break;
-			case "search" : break;
-			case "ask" : break;
-			case "quit" : break;
+			if(oRequete.get("action") != null) {
+				action = oRequete.get("action").toString();
 			}
+
+				switch(action) {
+				case "add" : 
+					response = add(oRequete.get("nick").toString(), oRequete.get("name").toString()).toJSONString();
+					break;
+				case "delete" : break;
+				case "delete_name" : break;
+				case "list" : 
+					response = list().toJSONString();
+					break;
+				case "search" : break;
+				case "ask" : break;
+				case "quit" : break;
+				default: 
+					response = error(11, "Champ action manquant ou invalide").toJSONString();
+				}
+			
 			
 		} catch (ParseException pe) {
 	         System.out.println("JSON Parse error at position: " + pe.getPosition());
@@ -77,6 +84,16 @@ public class ProtocoleSurnom {
 		oResponse.put("type", "add_ack");
 		oResponse.put("nick", surnom);
 		oResponse.put("name", nom);
+		return oResponse;
+	}
+	
+	private JSONObject error(int numError, String description) {
+		JSONObject oResponse = new JSONObject();
+		
+		oResponse.put("type", "error");
+		oResponse.put("code", Integer.toString(numError));
+		oResponse.put("desc", description);
+		
 		return oResponse;
 	}
 }
