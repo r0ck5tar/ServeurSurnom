@@ -54,6 +54,7 @@ public class ProtocoleSurnom {
 		} catch (ParseException pe) {
 	         System.out.println("JSON Parse error at position: " + pe.getPosition());
 	         System.out.println(pe);
+	         response = error(10, "Mauvais format (Pas du JSON)").toJSONString();
 		}
 		
 		return response;
