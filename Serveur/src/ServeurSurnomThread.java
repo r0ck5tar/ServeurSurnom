@@ -1,17 +1,17 @@
 import java.io.*;
 import java.net.*;
 
-public class ServeurSurnom {
+public class ServeurSurnomThread extends Thread {
 	private ProtocoleSurnom protocoleSurnom;
+	private Socket clientSocket = null;
 	
-	ServeurSurnom() {
+	ServeurSurnomThread(Socket clientSocket) {
 		protocoleSurnom = new ProtocoleSurnom();
+		this.clientSocket = clientSocket;
 	}
 		
 	public void run() {
 		try (
-				ServerSocket surnomService = new ServerSocket(3838);
-				Socket clientSocket = surnomService.accept();
 				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 		        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));){
 	        
