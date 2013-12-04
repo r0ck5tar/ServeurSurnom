@@ -57,7 +57,7 @@ public class ProtocoleSurnom {
 			response = error(10, "Mauvais format (Pas du JSON)").toJSONString();
 		}
 
-		return response;
+		return response + "\n";
 	}
 
 	private JSONObject list() {
@@ -72,7 +72,7 @@ public class ProtocoleSurnom {
 			System.out.println("nick:" + entry.getKey() + "\tname:" + entry.getValue());
 		}
 
-		oResponse.put("type", "success");
+		oResponse.put("type", "list_ack");
 		oResponse.put("nicks", list);
 
 		return oResponse;
@@ -95,6 +95,19 @@ public class ProtocoleSurnom {
 		oResponse.put("code", Integer.toString(numError));
 		oResponse.put("desc", description);
 
+		return oResponse;
+	}
+	
+	private JSONObject delete(String surnom) {
+		String nom = bdSurnom.rechercheSurnom(surnom);
+		bdSurnom.supprimeSurnom(surnom);
+		
+		JSONObject oResponse = new JSONObject();
+		
+		oResponse.put("type", "delete_ack");
+		oResponse.put("nick", surnom);
+		oResponse.put("name", nom);
+		
 		return oResponse;
 	}
 }

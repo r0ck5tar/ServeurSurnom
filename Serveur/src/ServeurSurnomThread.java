@@ -11,13 +11,15 @@ public class ServeurSurnomThread extends Thread {
 	}
 		
 	public void run() {
+		System.out.println("client connected");
 		try (
-				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 		        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));){
 	        
-	        String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                out.println(protocoleSurnom.genererReponse(inputLine));
+			String inputLine;
+            while ((inputLine = in.readLine())!= null) {
+                out.write(protocoleSurnom.genererReponse(inputLine));
+                out.flush();
             }
 	        
 		} catch (IOException e) {
