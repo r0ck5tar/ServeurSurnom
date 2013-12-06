@@ -2,20 +2,19 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
-public class ClientSurnom {
+public class ClientSurnomTCP {
 	
 	private Socket socketSurnom;
 	private BufferedWriter out;
 	private BufferedReader in;
 	private Scanner sc;
 	
-	public ClientSurnom(String hostName, int portNumber) {
+	public ClientSurnomTCP(String hostName, int portNumber) {
 		try {
 				socketSurnom = new Socket(hostName, portNumber);
 				out = new BufferedWriter(new OutputStreamWriter(socketSurnom.getOutputStream()));
@@ -30,21 +29,6 @@ public class ClientSurnom {
 		}
 	}
 	
-	public static void main(String[] args) {
-
-		if (args.length != 2) {
-			System.err.println(
-					"Usage: java clientSurnom <host name> <port number>");
-			System.exit(1);
-		}
-		
-		String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
-        
-        ClientSurnom client = new ClientSurnom(hostName,portNumber);
-        client.traitement();
-        //ip 172.19.250.196
-	}
 	
 	public void traitement(){
 		accueil();
@@ -54,14 +38,8 @@ public class ClientSurnom {
 		do{
 			System.out.print("\nVotre choix: ");
 			choix = sc.next();
-			switch(choix) {
-			case "add" : requete = ProtocoleClient.add(sc); break;
-			case "delete" : requete = ProtocoleClient.delete(sc); break;
-			case "deleteAll" : requete = ProtocoleClient.deleteAll(sc); break;
-			case "list" : requete = ProtocoleClient.list(); break;
-			case "search" : requete = ProtocoleClient.search(sc); break;
-			case "ask" : requete = ProtocoleClient.ask(sc); break;
-			}
+			requete = choisir(choix);
+			
 			try {
 				out.write(requete);
 				out.flush();
@@ -75,7 +53,19 @@ public class ClientSurnom {
 			}
 		} while (!choix.equals("exit"));
 		
+	}
+	
+	private String choisir(String choix) {
+		switch(choix) {
+		case "add" : return ProtocoleClient.add(sc); 
+		case "delete" : return ProtocoleClient.delete(sc); 
+		case "deleteAll" : return ProtocoleClient.deleteAll(sc);
+		case "list" : return ProtocoleClient.list();
+		case "search" : return ProtocoleClient.search(sc); 
+		case "ask" : return ProtocoleClient.ask(sc); 
+		default : return ProtocoleClient.list();
 		}
+	}
 	
 	private void accueil() {
 		System.out.println("Choisissez un type de requete a effectuer ou 'exit' pour quitter \n");

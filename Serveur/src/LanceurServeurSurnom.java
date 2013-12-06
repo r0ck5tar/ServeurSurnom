@@ -2,8 +2,6 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 
-
-
 public class LanceurServeurSurnom {
 	
 	private static int threads = 0;
