@@ -30,14 +30,24 @@ public class ClientSurnom {
 		}
 	}
 	
+	public static void main(String[] args) {
+
+		if (args.length != 2) {
+			System.err.println(
+					"Usage: java clientSurnom <host name> <port number>");
+			System.exit(1);
+		}
+		
+		String hostName = args[0];
+        int portNumber = Integer.parseInt(args[1]);
+        
+        ClientSurnom client = new ClientSurnom(hostName,portNumber);
+        client.traitement();
+        //ip 172.19.250.196
+	}
+	
 	public void traitement(){
-		System.out.println("Choisissez un type de requete a effectuer ou 'exit' pour quitter \n");
-		System.out.println("add -- Enregistrer un nom et un surnom");
-		System.out.println("delete -- Supprime un surnom");
-		System.out.println("deleteAll -- Supprime tout les surnoms d'un nom");
-		System.out.println("list -- Lister tous les noms enregistres dans le serveur");
-		System.out.println("search -- Recherche des surnoms associés a un nom");
-		System.out.println("ask -- Demande d'un nom associé à un surnom");
+		accueil();
 		String choix;
 		String requete = "";
 		JSONParser parser = new JSONParser();
@@ -67,19 +77,13 @@ public class ClientSurnom {
 		
 		}
 	
-	public static void main(String[] args) {
-
-		if (args.length != 2) {
-			System.err.println(
-					"Usage: java clienSurnom <host name> <port number>");
-			System.exit(1);
-		}
-		
-		String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
-        
-        ClientSurnom client = new ClientSurnom(hostName,portNumber);
-        client.traitement();
-        //ip 172.19.250.196
+	private void accueil() {
+		System.out.println("Choisissez un type de requete a effectuer ou 'exit' pour quitter \n");
+		System.out.println("add -- Enregistrer un nom et un surnom");
+		System.out.println("delete -- Supprime un surnom");
+		System.out.println("deleteAll -- Supprime tout les surnoms d'un nom");
+		System.out.println("list -- Lister tous les noms enregistres dans le serveur");
+		System.out.println("search -- Recherche des surnoms associés a un nom");
+		System.out.println("ask -- Demande d'un nom associé à un surnom");
 	}
 }
