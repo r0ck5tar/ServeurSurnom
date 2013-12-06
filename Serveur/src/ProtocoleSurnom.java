@@ -1,4 +1,3 @@
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.json.simple.JSONObject;
@@ -22,6 +21,7 @@ public class ProtocoleSurnom {
 		bdSurnom.initMapSurnom("surnoms.xml");
 	}
 
+	//TODO: everytime we do a "oRequete.get()" we have to check if it's null
 	public String genererReponse(String requete) {
 		String response = null;
 
@@ -38,14 +38,25 @@ public class ProtocoleSurnom {
 			case "add" : 
 				response = add(oRequete.get("nick").toString(), oRequete.get("name").toString()).toJSONString();
 				break;
-			case "delete" : break;
-			case "delete_name" : break;
+			case "delete" : 
+				response = delete(oRequete.get("nick").toString()).toJSONString();
+				break;
+			case "delete_name" : 
+				response = deleteName(oRequete.get("name").toString()).toJSONString();
+				break;
 			case "list" : 
 				response = list().toJSONString();
 				break;
-			case "search" : break;
-			case "ask" : break;
-			case "quit" : break;
+			case "search" : 
+				System.out.println(oRequete.get("name"));
+				response = search(oRequete.get("name").toString()).toJSONString();
+				break;
+			case "ask" : 
+				response = ask(oRequete.get("nick").toString()).toJSONString();
+				break;
+			case "quit" : 
+				response = quit().toJSONString(); 
+				break;
 			default: 
 				response = error(11, "Champ action manquant ou invalide").toJSONString();
 			}
@@ -99,6 +110,7 @@ public class ProtocoleSurnom {
 	}
 	
 	private JSONObject delete(String surnom) {
+		//TODO: error check: trying to delete non-existant nick
 		String nom = bdSurnom.rechercheSurnom(surnom);
 		bdSurnom.supprimeSurnom(surnom);
 		
@@ -109,5 +121,58 @@ public class ProtocoleSurnom {
 		oResponse.put("name", nom);
 		
 		return oResponse;
+	}
+	
+	private JSONObject deleteName(String nom) {
+		JSONArray list = new JSONArray();
+		
+		for (String surnom : bdSurnom.rechercheNom(nom)) {
+			JSONObject nick = new JSONObject();
+			nick.put("nick", surnom);
+			list.add(nick);
+		}
+		
+		bdSurnom.supprimeNom(nom);
+		
+		JSONObject oResponse = new JSONObject();
+		
+		oResponse.put("type", "delete_name_ack");
+		oResponse.put("nicks", list);
+
+		return oResponse;
+	}
+	
+	private JSONObject search(String nom) {
+		JSONArray list = new JSONArray();
+		
+		for (String surnom : bdSurnom.rechercheNom(nom)) {
+			JSONObject nick = new JSONObject();
+			nick.put("nick", surnom);
+			list.add(nick);
+		}
+		
+		JSONObject oResponse = new JSONObject();
+		
+		oResponse.put("type", "search_ack");
+		oResponse.put("nicks", list);
+
+		return oResponse;
+	}
+	
+	private JSONObject ask(String surnom) {
+		
+		JSONObject oResponse = new JSONObject();
+		
+		oResponse.put("type", "ask_ack");
+		oResponse.put("name", bdSurnom.rechercheSurnom(surnom));
+
+		return oResponse;
+	}
+	
+	private JSONObject quit() {
+		JSONObject oResponse = new JSONObject();
+			oResponse.put("type", "quit_ack");
+		return oResponse;
+		
 	}
 }

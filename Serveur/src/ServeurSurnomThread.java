@@ -4,6 +4,7 @@ import java.net.*;
 public class ServeurSurnomThread extends Thread {
 	private ProtocoleSurnom protocoleSurnom;
 	private Socket clientSocket = null;
+	private boolean listening = true;
 	
 	ServeurSurnomThread(Socket clientSocket) {
 		protocoleSurnom = new ProtocoleSurnom();
@@ -17,14 +18,24 @@ public class ServeurSurnomThread extends Thread {
 		        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));){
 	        
 			String inputLine;
-            while ((inputLine = in.readLine())!= null) {
-                out.write(protocoleSurnom.genererReponse(inputLine));
+            while ((listening && (inputLine = in.readLine())!= null)) {
+            	String reponse = protocoleSurnom.genererReponse(inputLine);
+                out.write(reponse);
                 out.flush();
+                
+                if(reponse.contains("quit")) {
+                	clientSocket.close();
+                	listening = false;
+                }
             }
 	        
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isListening() {
+		return listening;
 	}
 }
 

@@ -11,7 +11,9 @@ public class LanceurServeurSurnom {
 		
 		try (ServerSocket surnomService = new ServerSocket(portNumber);){
 			while(listening) {
-				new ServeurSurnomThread(surnomService.accept()).start();
+				ServeurSurnomThread serveurThread = new ServeurSurnomThread(surnomService.accept());
+				serveurThread.start();
+				
 			}
 		} catch (IOException e) {
 			System.err.println("Could not listen on port " + portNumber);
